@@ -1,6 +1,6 @@
 # blog
 
-- 实现new 方法
+- **实现new 方法**
   
     原理：
     
@@ -17,6 +17,65 @@
       // 执行构造函数，即绑定 this，并且为这个新对象添加属性
       func.apply(obj, arguments);
       return obj;
+    }
+  }
+  ```
+
+- **call 实现**
+  
+  原理：将要改变this指向的方法挂到目标this上执行并返回
+  
+  ```javascript
+  Function.prototype.myCall = function (context) {
+    if (typeof this !== 'function') {
+      throw new TypeError('not a function');
+    }
+    context = context || window
+    context.fn = this
+    let arg = [...arguments].slice(1)
+    let result = context.fn(...arg)
+    delete context.fn
+    return result
+  }
+  ```
+  
+- **apply 实现**
+  
+  原理：将要改变this指向的方法挂到目标this上执行并返回
+  
+  ```javascript
+  Function.prototype.myApply = function (context) {
+    if (typeof this !== 'function') {
+      throw new TypeError('not funciton')
+    }
+    context = context || window
+    context.fn = this
+    let result
+    if (arguments[1]) {
+      result = context.fn(...arguments[1])
+    } else {
+      result = context.fn()
+    }
+    delete context.fn
+    return result
+  }
+  ```
+  
+- **bind 实现**
+  ```javascript
+  Function.prototype.myBind = function (context) {
+    if (typeof this !== 'function') {
+      throw new TypeError('Error')
+    }
+    let _this = this
+    let arg = [...arguments].slice(1)
+    return function F() {
+      // 处理函数使用new的情况
+      if (this instanceof F) {
+        return new _this(...arg, ...arguments)
+      } else {
+        return _this.apply(context, arg.concat(...arguments))
+      }
     }
   }
   ```
