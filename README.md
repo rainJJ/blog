@@ -31,9 +31,12 @@
       throw new TypeError('not a function');
     }
     context = context || window
+    // 获取调用call的函数
     context.fn = this
     let arg = [...arguments].slice(1)
+    // 执行该函数
     let result = context.fn(...arg)
+    // 删除该函数
     delete context.fn
     return result
   }
